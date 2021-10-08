@@ -77,7 +77,7 @@ $custom_alerts = [
                 __( 'Changed the ID of the table %table_name%.', 'wsal-tablepress' ),
 
                 [
-                    __( 'Old table ID', 'wsal-tablepress' ) => '%old_table_id%',
+                    __( 'Previous table ID', 'wsal-tablepress' ) => '%old_table_id%',
                     __( 'New table ID', 'wsal-tablepress' ) => '%table_id%',
                 ],
                 [
@@ -96,6 +96,10 @@ $custom_alerts = [
 
                 [
                     __( 'Table ID', 'wsal-tablepress' ) => '%table_id%',
+                    __( 'Number of rows', 'wsal-tablepress' ) => '%rows%',
+                    __( 'Number of columns', 'wsal-tablepress' ) => '%columns%',
+                    __( 'Previous number of rows', 'wsal-tablepress' ) => '%old_rows%',
+                    __( 'Previous number of columns', 'wsal-tablepress' ) => '%old_columns%',
                 ],
                 [
                     __( 'View in the editor', 'wsal-tablepress' ) => '%EditorLink%',
