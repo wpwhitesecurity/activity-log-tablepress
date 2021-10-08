@@ -232,6 +232,28 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 				}
 
 			}
+		} else if ( isset( $_POST['tablepress']['number']['columns'] ) && intval( $_POST['tablepress']['number']['columns'] ) != $this->_old_column_count ) {
+			$event_type = ( $this->_old_column_count > intval( $_POST['tablepress']['number']['columns'] ) ) ? 'added' : 'removed';
+			$alert_id = 8906;
+			$variables = array(
+				'table_name'    => sanitize_text_field( get_the_title( $table_id ) ),
+				'table_id'      => $table_id,
+				'count'         => ( isset( $_POST['tablepress']['number']['columns'] ) ) ? intval( $_POST['tablepress']['number']['columns'] ) : 0,
+				'old_count'     => $this->_old_column_count,
+				'EventType'     => $event_type,
+				'column_or_row' => 'column'
+			);	
+		} else if ( isset( $_POST['tablepress']['number']['rows'] ) && intval( $_POST['tablepress']['number']['rows'] ) != $this->_old_row_count ) {
+			$event_type = ( $this->_old_row_count > intval( $_POST['tablepress']['number']['rows'] ) ) ? 'added' : 'removed';
+			$alert_id = 8906;
+			$variables = array(
+				'table_name'    => sanitize_text_field( get_the_title( $table_id ) ),
+				'table_id'      => $table_id,
+				'count'         => ( isset( $_POST['tablepress']['number']['rows'] ) ) ? intval( $_POST['tablepress']['number']['rows'] ) : 0,
+				'old_count'     => $this->_old_row_count,
+				'EventType'     => $event_type,
+				'column_or_row' => 'row'
+			);	
 		} else {
 			$alert_id = 8905;
 			$variables = array(
@@ -242,8 +264,7 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 				'old_columns' => $this->_old_column_count,
 				'old_rows'    => $this->_old_row_count,
 			);	
-		}
-
+		}		
 
 		$this->plugin->alerts->Trigger( $alert_id, $variables );
 

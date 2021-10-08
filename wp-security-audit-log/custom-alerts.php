@@ -109,6 +109,24 @@ $custom_alerts = [
             ],
 
             [
+                8906,
+                WSAL_MEDIUM,
+                __( 'A table row was added or removed', 'wsal-tablepress' ),
+                __( 'A %column_or_row% was added / removed in the table %table_name%', 'wsal-tablepress' ),
+
+                [
+                    __( 'Table ID', 'wsal-tablepress' ) => '%table_id%',
+                    __( 'Previous count', 'wsal-tablepress' ) => '%old_count%',
+                    __( 'Count', 'wsal-tablepress' ) => '%count%',
+                ],
+                [
+                    __( 'View in the editor', 'wsal-tablepress' ) => '%EditorLink%',
+                ],
+                'tablepress_tables',
+                'added',
+            ],
+
+            [
                 8907,
                 WSAL_MEDIUM,
                 __( 'A table option was modified', 'wsal-tablepress' ),
