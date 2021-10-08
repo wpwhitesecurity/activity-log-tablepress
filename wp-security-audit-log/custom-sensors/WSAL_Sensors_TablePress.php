@@ -23,8 +23,41 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 	 */
 	public function HookEvents() {
 		if ( is_user_logged_in() ) {
-			
+			// do_action( 'tablepress_event_saved_table', $table_id );
+			// do_action( 'tablepress_event_added_table', $table_id );
+			// do_action( 'tablepress_event_copied_table', $new_table_id, $table_id );
+			// do_action( 'tablepress_event_deleted_table', $table_id );
+			// do_action( 'tablepress_event_deleted_all_tables' );
+			// do_action( 'tablepress_event_changed_table_id', $new_id, $old_id );
+
+			// add_action( 'tablepress_event_saved_table', [ $this, 'event_table_saved' ] );
+			add_action( 'tablepress_event_added_table', [ $this, 'event_table_added' ] );
+			// add_action( 'tablepress_event_copied_table', [ $this, 'event_table_copied' ], 10, 2 );
+			// add_action( 'tablepress_event_deleted_table', [ $this, 'event_table_deleted' ] );
+			// add_action( 'tablepress_event_deleted_all_tables', [ $this, 'event_all_tabels_deleted' ] );
+			// add_action( 'tablepress_event_changed_table_id', [ $this, 'event_table_id_change' ], 10, 2 );
 		}
 	}
-	
+
+	public function event_table_added( $table_id ) {
+		$editor_link = esc_url(
+			add_query_arg(
+				array(
+					'table_id' =>  $table_id,
+					'action' =>  'edit',
+				),
+				admin_url( 'admin.php?page=tablepress' )
+			)
+		);
+
+		$variables = array(
+			'table_name' => sanitize_text_field( get_the_title( $table_id ) ),
+			'table_id'   => $table_id,
+			'columns'    => ( isset( $_POST[ 'table' ] ) ) ? intval( $_POST[ 'table' ][ 'columns' ] ) : 0,
+			'rows'       => ( isset( $_POST[ 'table' ] ) ) ? intval( $_POST[ 'table' ][ 'rows' ] ) : 0,
+			'EditorLink' => $editor_link,
+		);
+
+		$this->plugin->alerts->Trigger( 8900, $variables );
+	}	
 }
