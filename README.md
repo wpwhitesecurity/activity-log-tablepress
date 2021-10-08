@@ -84,7 +84,7 @@ function append_content_to_toggle( $alert_id ) {
       <td>
         <input name="frontend-events[new_event]" type="checkbox" id="frontend-events[new_event]" value="1" <?php checked( $enable_for_visitors ); ?> />
       </td>
-      <td colspan="2"><?php esc_html_e( 'Keep a log of this event on the front end?', 'wsal-gravity-forms' ); ?></td>
+      <td colspan="2"><?php esc_html_e( 'Keep a log of this event on the front end?', 'wsal-tablepress' ); ?></td>
     </tr>
     <?php
   }
@@ -94,8 +94,8 @@ function append_content_to_toggle( $alert_id ) {
 
 2.  Add filter wsal_load_on_frontend to check the front-end on/off settings array to see if the plugin needs to load.
 ````
-function wsal_gravityforms_allow_sensor_on_frontend( $default, $frontend_events ) {
-  $should_load = ( $default || ! empty( $frontend_events['gravityforms'] ) ) ? true : false;;
+function wsal_tablepress_allow_sensor_on_frontend( $default, $frontend_events ) {
+  $should_load = ( $default || ! empty( $frontend_events['tablepress'] ) ) ? true : false;;
   return $should_load;
 }
 ````
@@ -103,7 +103,7 @@ function wsal_gravityforms_allow_sensor_on_frontend( $default, $frontend_events 
 3.  Use 'wsal_load_public_sensors' to add our sensor to the array of public sensors
 
 ````
-function wsal_gravityforms_extension_load_public_sensors( $value ) {
+function wsal_tablepress_extension_load_public_sensors( $value ) {
   $value[] = 'Gravity_Forms';
   return $value;
 }

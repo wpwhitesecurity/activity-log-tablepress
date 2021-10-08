@@ -32,4 +32,7 @@
  REQUIRED. Here we include and fire up the main core class. This is crucial so leave intact.
 */
 require_once plugin_dir_path( __FILE__ ) . 'core/class-extension-core.php';
-$wsal_extension = new WPWhiteSecurity\ActivityLog\Extensions\Common\Core( __FILE__, 'wsal-yoast' );
+$wsal_extension = new WPWhiteSecurity\ActivityLog\Extensions\Common\Core( __FILE__, 'wsal-tablepress' );
+
+// Include extension specific functions.
+require_once plugin_dir_path( __FILE__ ) . 'includes/wsal-functions.php';
