@@ -2,8 +2,8 @@
 /**
  * Plugin Name: WP Activity Log Extension for TablePress
  * Plugin URI: https://wpactivitylog.com/extensions/
- * Description: A WP Activity Log plugin extension
- * Text Domain: wp-security-audit-log
+ * Description: A WP Activity Log plugin extension for TablePress
+ * Text Domain: wsal-tablepress
  * Author: WP White Security
  * Author URI: http://www.wpwhitesecurity.com/
  * Version: 1.0.0
