@@ -108,6 +108,22 @@ $custom_alerts = [
                 'updated',
             ],
 
+            [
+                8907,
+                WSAL_MEDIUM,
+                __( 'A table option was modified', 'wsal-tablepress' ),
+                __( 'Changed the status of the table option %option_name% in %table_name%', 'wsal-tablepress' ),
+
+                [
+                    __( 'Table ID', 'wsal-tablepress' ) => '%table_id%',
+                ],
+                [
+                    __( 'View in the editor', 'wsal-tablepress' ) => '%EditorLink%',
+                ],
+                'tablepress_tables',
+                'enabled',
+            ],
+
         ],
     ],
 ];

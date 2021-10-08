@@ -198,7 +198,7 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 				admin_url( 'admin.php?page=tablepress' )
 			)
 		);
-
+		
 		$old_table_details = ( isset( $this->_old_meta['_tablepress_table_options'][0] ) ) ? json_decode( $this->_old_meta['_tablepress_table_options'][0], true ) : [];
 		// Remove part we are not interested in.
 		if ( isset( $old_table_details['last_editor'] ) ) {
@@ -207,20 +207,45 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 
 		$new_table_options = ( isset( $_POST['tablepress']['options'] ) ) ? json_decode( str_replace( '\"', '"', $_POST['tablepress']['options'] ), true ) : [];
 
-		$changed = array_diff_assoc( $old_table_details, $new_table_options );
+		$changed      = array_diff_assoc( $old_table_details, $new_table_options );
+		$bool_options = [ 'table_head', 'table_foot', 'alternating_row_colors', 'row_hover'];
 		
-		error_log( print_r( $changed , true) );
+		if ( ! empty( $changed ) ) {
+			foreach ( $changed as $updated_table_setting => $value ) {
+				if ( in_array( $updated_table_setting , $bool_options ) ) {
+					if ( 'table_foot' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'The last row of the table is the table footer.', 'wsal-tablepress' );
+					} else if ( 'table_head' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'The first row of the table is the table header.', 'wsal-tablepress' );
+					} else if ( 'alternating_row_colors' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'The background colors of consecutive rows shall alternate.', 'wsal-tablepress' );
+					} else if ( 'row_hover' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'Highlight a row while the mouse cursor hovers above it by changing its background color.', 'wsal-tablepress' );
+					}
+					$alert_id = 8907;
+					$variables = array(
+						'table_name'  => sanitize_text_field( get_the_title( $table_id ) ),
+						'table_id'    => $table_id,
+						'option_name' => $updated_name,
+						'EventType'   => ( $new_table_options[$updated_table_setting] ) ? 'enabled' : 'disabled',
+					);
+				}
 
-		$variables = array(
-			'table_name'  => sanitize_text_field( get_the_title( $table_id ) ),
-			'table_id'    => $table_id,
-			'columns'     => ( isset( $_POST['tablepress']['number']['columns'] ) ) ? intval( $_POST['tablepress']['number']['columns'] ) : 0,
-			'rows'        => ( isset( $_POST['tablepress']['number']['rows'] ) ) ? intval( $_POST['tablepress']['number']['rows'] ) : 0,
-			'old_columns' => $this->_old_column_count,
-			'old_rows'    => $this->_old_row_count,
-		);
+			}
+		} else {
+			$alert_id = 8905;
+			$variables = array(
+				'table_name'  => sanitize_text_field( get_the_title( $table_id ) ),
+				'table_id'    => $table_id,
+				'columns'     => ( isset( $_POST['tablepress']['number']['columns'] ) ) ? intval( $_POST['tablepress']['number']['columns'] ) : 0,
+				'rows'        => ( isset( $_POST['tablepress']['number']['rows'] ) ) ? intval( $_POST['tablepress']['number']['rows'] ) : 0,
+				'old_columns' => $this->_old_column_count,
+				'old_rows'    => $this->_old_row_count,
+			);	
+		}
 
-		$this->plugin->alerts->Trigger( 8905, $variables );
+
+		$this->plugin->alerts->Trigger( $alert_id, $variables );
 
 		return;
 	}
