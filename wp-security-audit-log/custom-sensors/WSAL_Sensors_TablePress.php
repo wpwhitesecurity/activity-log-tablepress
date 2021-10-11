@@ -221,13 +221,13 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 
 					// Tidy up name to something useful.
 					if ( 'table_foot' == $updated_table_setting ) {
-						$updated_name = esc_html__( 'The last row of the table is the table footer.', 'wsal-tablepress' );
+						$updated_name = esc_html__( 'The last row of the table is the table footer', 'wsal-tablepress' );
 					} else if ( 'table_head' == $updated_table_setting ) {
-						$updated_name = esc_html__( 'The first row of the table is the table header.', 'wsal-tablepress' );
+						$updated_name = esc_html__( 'The first row of the table is the table header', 'wsal-tablepress' );
 					} else if ( 'alternating_row_colors' == $updated_table_setting ) {
-						$updated_name = esc_html__( 'The background colors of consecutive rows shall alternate.', 'wsal-tablepress' );
+						$updated_name = esc_html__( 'The background colors of consecutive rows shall alternate', 'wsal-tablepress' );
 					} else if ( 'row_hover' == $updated_table_setting ) {
-						$updated_name = esc_html__( 'Highlight a row while the mouse cursor hovers above it by changing its background color.', 'wsal-tablepress' );
+						$updated_name = esc_html__( 'Highlight a row while the mouse cursor hovers above it by changing its background color', 'wsal-tablepress' );
 					}
 					$alert_id = 8908;
 					$variables = array(
