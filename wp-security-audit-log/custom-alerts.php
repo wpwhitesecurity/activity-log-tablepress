@@ -112,12 +112,12 @@ $custom_alerts = [
                 8906,
                 WSAL_MEDIUM,
                 __( 'A table row was added or removed', 'wsal-tablepress' ),
-                __( 'A %column_or_row% was added / removed in the table %table_name%', 'wsal-tablepress' ),
+                __( 'A row was added or removed from the table %table_name%', 'wsal-tablepress' ),
 
                 [
                     __( 'Table ID', 'wsal-tablepress' ) => '%table_id%',
-                    __( 'Previous count', 'wsal-tablepress' ) => '%old_count%',
-                    __( 'Count', 'wsal-tablepress' ) => '%count%',
+                    __( 'Previous row count', 'wsal-tablepress' ) => '%old_count%',
+                    __( 'New row count', 'wsal-tablepress' ) => '%count%',
                 ],
                 [
                     __( 'View in the editor', 'wsal-tablepress' ) => '%EditorLink%',
@@ -128,6 +128,24 @@ $custom_alerts = [
 
             [
                 8907,
+                WSAL_MEDIUM,
+                __( 'A table column was added or removed', 'wsal-tablepress' ),
+                __( 'A column was added or removed from the table %table_name%', 'wsal-tablepress' ),
+
+                [
+                    __( 'Table ID', 'wsal-tablepress' ) => '%table_id%',
+                    __( 'Previous column count', 'wsal-tablepress' ) => '%old_count%',
+                    __( 'New column count', 'wsal-tablepress' ) => '%count%',
+                ],
+                [
+                    __( 'View in the editor', 'wsal-tablepress' ) => '%EditorLink%',
+                ],
+                'tablepress_tables',
+                'added',
+            ],
+
+            [
+                8908,
                 WSAL_MEDIUM,
                 __( 'A table option was modified', 'wsal-tablepress' ),
                 __( 'Changed the status of the table option %option_name% in %table_name%', 'wsal-tablepress' ),

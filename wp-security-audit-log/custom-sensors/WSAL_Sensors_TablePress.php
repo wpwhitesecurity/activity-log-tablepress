@@ -140,6 +140,7 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 			'table_name'     => sanitize_text_field( get_the_title( $table_id ) ),
 			'new_table_name' => sanitize_text_field( get_the_title( $new_table_id ) ),
 			'table_id'       => $new_table_id,
+			'EditorLink'     => $editor_link,
 		);
 
 		$this->plugin->alerts->Trigger( 8902, $variables );
@@ -172,6 +173,7 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 			'table_name'   => sanitize_text_field( get_the_title( $old_id) ),
 			'old_table_id' => $old_id,
 			'table_id'     => $new_id,
+			'EditorLink'   => $editor_link,
 		);
 
 		$this->plugin->alerts->Trigger( 8904, $variables );
@@ -200,6 +202,7 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 		);
 		
 		$old_table_details = ( isset( $this->_old_meta['_tablepress_table_options'][0] ) ) ? json_decode( $this->_old_meta['_tablepress_table_options'][0], true ) : [];
+
 		// Remove part we are not interested in.
 		if ( isset( $old_table_details['last_editor'] ) ) {
 			unset( $old_table_details['last_editor']  );
@@ -209,10 +212,14 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 
 		$changed      = array_diff_assoc( $old_table_details, $new_table_options );
 		$bool_options = [ 'table_head', 'table_foot', 'alternating_row_colors', 'row_hover'];
+		$alert_needed = false;
 		
+		// Detect and report setting changes.
 		if ( ! empty( $changed ) ) {
 			foreach ( $changed as $updated_table_setting => $value ) {
 				if ( in_array( $updated_table_setting , $bool_options ) ) {
+
+					// Tidy up name to something useful.
 					if ( 'table_foot' == $updated_table_setting ) {
 						$updated_name = esc_html__( 'The last row of the table is the table footer.', 'wsal-tablepress' );
 					} else if ( 'table_head' == $updated_table_setting ) {
@@ -222,29 +229,35 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 					} else if ( 'row_hover' == $updated_table_setting ) {
 						$updated_name = esc_html__( 'Highlight a row while the mouse cursor hovers above it by changing its background color.', 'wsal-tablepress' );
 					}
-					$alert_id = 8907;
+					$alert_id = 8908;
 					$variables = array(
-						'table_name'  => sanitize_text_field( get_the_title( $table_id ) ),
-						'table_id'    => $table_id,
-						'option_name' => $updated_name,
-						'EventType'   => ( $new_table_options[$updated_table_setting] ) ? 'enabled' : 'disabled',
+						'table_name'   => sanitize_text_field( get_the_title( $table_id ) ),
+						'table_id'     => $table_id,
+						'option_name'  => $updated_name,
+						'EventType'    => ( $new_table_options[$updated_table_setting] ) ? 'enabled' : 'disabled',
+						'EditorLink'   => $editor_link,
 					);
+					$this->plugin->alerts->Trigger( $alert_id, $variables );
 				}
-
 			}
+
+		// Detect new or removed columns.
 		} else if ( isset( $_POST['tablepress']['number']['columns'] ) && intval( $_POST['tablepress']['number']['columns'] ) != $this->_old_column_count ) {
-			$event_type = ( $this->_old_column_count > intval( $_POST['tablepress']['number']['columns'] ) ) ? 'added' : 'removed';
-			$alert_id = 8906;
+			$event_type = ( $this->_old_column_count > intval( $_POST['tablepress']['number']['columns'] ) ) ? 'removed' : 'added';
+			$alert_id = 8907;
 			$variables = array(
 				'table_name'    => sanitize_text_field( get_the_title( $table_id ) ),
 				'table_id'      => $table_id,
 				'count'         => ( isset( $_POST['tablepress']['number']['columns'] ) ) ? intval( $_POST['tablepress']['number']['columns'] ) : 0,
 				'old_count'     => $this->_old_column_count,
 				'EventType'     => $event_type,
-				'column_or_row' => 'column'
+				'EditorLink'   => $editor_link,
 			);	
+			$alert_needed = true;
+		
+		// Detect new or removed rows.
 		} else if ( isset( $_POST['tablepress']['number']['rows'] ) && intval( $_POST['tablepress']['number']['rows'] ) != $this->_old_row_count ) {
-			$event_type = ( $this->_old_row_count > intval( $_POST['tablepress']['number']['rows'] ) ) ? 'added' : 'removed';
+			$event_type = ( $this->_old_row_count > intval( $_POST['tablepress']['number']['rows'] ) ) ? 'removed' : 'added';
 			$alert_id = 8906;
 			$variables = array(
 				'table_name'    => sanitize_text_field( get_the_title( $table_id ) ),
@@ -252,8 +265,10 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 				'count'         => ( isset( $_POST['tablepress']['number']['rows'] ) ) ? intval( $_POST['tablepress']['number']['rows'] ) : 0,
 				'old_count'     => $this->_old_row_count,
 				'EventType'     => $event_type,
-				'column_or_row' => 'row'
+				'EditorLink'    => $editor_link,
 			);	
+		
+		// Report other changes we do not (yet) support.
 		} else {
 			$alert_id = 8905;
 			$variables = array(
@@ -263,10 +278,14 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 				'rows'        => ( isset( $_POST['tablepress']['number']['rows'] ) ) ? intval( $_POST['tablepress']['number']['rows'] ) : 0,
 				'old_columns' => $this->_old_column_count,
 				'old_rows'    => $this->_old_row_count,
+				'EditorLink'  => $editor_link,
 			);	
 		}		
-
-		$this->plugin->alerts->Trigger( $alert_id, $variables );
+		
+		if ( $alert_needed ) {
+			// Do alert.
+			$this->plugin->alerts->Trigger( $alert_id, $variables );
+		}
 
 		return;
 	}
