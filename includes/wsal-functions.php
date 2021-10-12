@@ -4,6 +4,7 @@
  */
 add_filter( 'wsal_event_objects', 'wsal_tablepress_add_custom_event_objects', 10, 2 );
 add_filter( 'wsal_event_type_data', 'wsal_tablepress_add_custom_event_type', 10, 2 );
+add_filter( 'wsal_ignored_custom_post_types', 'wsal_tablepress_add_custom_ignored_cpt' );
 
 /**
  * Register a custom event object within WSAL.
@@ -31,3 +32,21 @@ function wsal_tablepress_add_custom_event_objects( $objects ) {
 
  	return $types;
  }
+
+ /**
+ * Adds new ignored CPT for our plugin
+ *
+ * @method wsal_tablepress_add_custom_ignored_cpt
+ * @since  1.0.0
+ * @param  array $post_types An array of default post_types.
+ * @return array
+ */
+function wsal_tablepress_add_custom_ignored_cpt( $post_types ) {
+	$new_post_types = array(
+		'tablepress_table',
+	);
+
+	// combine the two arrays.
+	$post_types = array_merge( $post_types, $new_post_types );
+	return $post_types;
+}
