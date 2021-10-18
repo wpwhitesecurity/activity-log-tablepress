@@ -16,6 +16,13 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 	private $cached_alert_checks = null;
 
 	/**
+	 * Holds the table ID assigned to the table during import.
+	 *
+	 * @var null|int
+	 */
+	private $imported_table_id = null;
+
+	/**
 	 * Hook events related to sensor.
 	 *
 	 * @since 1.0.0
@@ -29,7 +36,8 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 			add_action( 'tablepress_event_deleted_table', [ $this, 'event_table_deleted' ] );
 			add_action( 'tablepress_event_copied_table', [ $this, 'event_table_copied' ], 10, 2 );
 			add_action( 'tablepress_event_changed_table_id', [ $this, 'event_table_id_change' ], 10, 2 );
-			add_action( 'tablepress_event_saved_table', [ $this, 'event_table_saved' ] );
+			add_action( 'tablepress_event_saved_table', [ $this, 'event_table_saved' ] );	
+			add_action( 'wp_insert_post', [ $this, 'event_table_imported' ] );
 		}
 	}
 
@@ -78,12 +86,12 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 				),
 				admin_url( 'admin.php?page=tablepress' )
 			)
-		);
+		);		
 
 		$event_id = ( isset( $_POST['action'] ) && 'tablepress_import' == $_POST['action'] ) ? 8903 : 8900;
 
 		$variables = array(
-			'table_name' => sanitize_text_field( get_the_title( $table_id ) ),
+			'table_name' => sanitize_text_field( get_the_title( $this->imported_table_id ) ),
 			'table_id'   => $table_id,
 			'columns'    => ( isset( $_POST[ 'table' ] ) ) ? intval( $_POST[ 'table' ][ 'columns' ] ) : 0,
 			'rows'       => ( isset( $_POST[ 'table' ] ) ) ? intval( $_POST[ 'table' ][ 'rows' ] ) : 0,
@@ -287,6 +295,18 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 			$this->plugin->alerts->Trigger( $alert_id, $variables );
 		}
 
+		return;
+	}
+
+		/**
+	 * Detect imported tabled.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int $table_id - Table ID.
+	 */
+	public function event_table_imported( $table_id ) {
+		$this->imported_table_id = $table_id;
 		return;
 	}
 }
