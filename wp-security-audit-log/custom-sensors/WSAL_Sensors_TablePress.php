@@ -23,6 +23,13 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 	private $imported_table_id = null;
 
 	/**
+	 * Holds the post ID assigned to the table during deketion.
+	 *
+	 * @var null|int
+	 */
+	private $deleted_table_title = null;
+
+	/**
 	 * Hook events related to sensor.
 	 *
 	 * @since 1.0.0
@@ -33,7 +40,10 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 			add_action( 'pre_post_update', array( $this, 'get_before_post_edit_data' ), 10, 2 );
 
 			add_action( 'tablepress_event_added_table', [ $this, 'event_table_added' ] );
+
+			add_action( 'deleted_post', [ $this, 'event_table_pre_deleted' ] );
 			add_action( 'tablepress_event_deleted_table', [ $this, 'event_table_deleted' ] );
+
 			add_action( 'tablepress_event_copied_table', [ $this, 'event_table_copied' ], 10, 2 );
 			add_action( 'tablepress_event_changed_table_id', [ $this, 'event_table_id_change' ], 10, 2 );
 			add_action( 'tablepress_event_saved_table', [ $this, 'event_table_saved' ] );	
@@ -103,6 +113,19 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 		return;
 	}	
 
+
+	/**
+	 * Grab correct table name before deletion.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int $table_id - Table ID.
+	 */
+	public function event_table_pre_deleted( $table_id ) {
+		$this->deleted_table_title = sanitize_text_field( get_the_title( $table_id ) );
+		return;
+	}
+
 	/**
 	 * Report table deletions.
 	 *
@@ -114,7 +137,7 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 	 */
 	public function event_table_deleted( $table_id ) {
 		$variables = array(
-			'table_name' => sanitize_text_field( get_the_title( $table_id ) ),
+			'table_name' => $this->deleted_table_title,
 			'table_id'   => $table_id,
 		);
 
@@ -144,9 +167,18 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 			)
 		);
 
+		if ( ! class_exists( 'TablePress_Table_Model' ) ) {
+			return;
+		}
+
+		$tablepress = new TablePress_Table_Model;
+		$old_table  = $tablepress->load( $table_id );
+		$new_table  = $tablepress->load( $new_table_id );
+
+
 		$variables = array(
-			'table_name'     => sanitize_text_field( get_the_title( $table_id ) ),
-			'new_table_name' => sanitize_text_field( get_the_title( $new_table_id ) ),
+			'table_name'     => sanitize_text_field( $old_table['name'] ),
+			'new_table_name' => sanitize_text_field( $new_table['name'] ),
 			'table_id'       => $new_table_id,
 			'EditorLink'     => $editor_link,
 		);
@@ -177,8 +209,15 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 			)
 		);
 
+		if ( ! class_exists( 'TablePress_Table_Model' ) ) {
+			return;
+		}
+
+		$tablepress    = new TablePress_Table_Model;
+		$table_details = $tablepress->load( $new_id );
+
 		$variables = array(
-			'table_name'   => sanitize_text_field( get_the_title( $old_id) ),
+			'table_name'   => sanitize_text_field( $table_details['name'] ),
 			'old_table_id' => $old_id,
 			'table_id'     => $new_id,
 			'EditorLink'   => $editor_link,
@@ -221,6 +260,13 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 		$changed      = array_diff_assoc( $old_table_details, $new_table_options );
 		$bool_options = [ 'table_head', 'table_foot', 'alternating_row_colors', 'row_hover'];
 		$alert_needed = false;
+
+		if ( ! class_exists( 'TablePress_Table_Model' ) ) {
+			return;
+		}
+
+		$tablepress    = new TablePress_Table_Model;
+		$table_details = $tablepress->load( $table_id );
 		
 		// Detect and report setting changes.
 		if ( ! empty( $changed ) ) {
@@ -239,7 +285,7 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 					}
 					$alert_id = 8908;
 					$variables = array(
-						'table_name'   => sanitize_text_field( get_the_title( $table_id ) ),
+						'table_name'   => sanitize_text_field( $table_details['name'] ),
 						'table_id'     => $table_id,
 						'option_name'  => $updated_name,
 						'EventType'    => ( $new_table_options[$updated_table_setting] ) ? 'enabled' : 'disabled',
@@ -247,14 +293,29 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 					);
 					$this->plugin->alerts->Trigger( $alert_id, $variables );
 				}
-			}
+				// Report other changes we do not (yet) support.
+				else {
+					$alert_id = 8905;
+					$variables = array(
+						'table_name'  => sanitize_text_field( $table_details['name'] ),
+						'table_id'    => $table_id,
+						'columns'     => ( isset( $_POST['tablepress']['number']['columns'] ) ) ? intval( $_POST['tablepress']['number']['columns'] ) : 0,
+						'rows'        => ( isset( $_POST['tablepress']['number']['rows'] ) ) ? intval( $_POST['tablepress']['number']['rows'] ) : 0,
+						'old_columns' => $this->_old_column_count,
+						'old_rows'    => $this->_old_row_count,
+						'EditorLink'  => $editor_link,
+					);	
+					$alert_needed = true;
+				}	
+			}		
+		} 			
 
 		// Detect new or removed columns.
-		} else if ( isset( $_POST['tablepress']['number']['columns'] ) && intval( $_POST['tablepress']['number']['columns'] ) != $this->_old_column_count ) {
+		if ( isset( $_POST['tablepress']['number']['columns'] ) && intval( $_POST['tablepress']['number']['columns'] ) != $this->_old_column_count ) {
 			$event_type = ( $this->_old_column_count > intval( $_POST['tablepress']['number']['columns'] ) ) ? 'removed' : 'added';
 			$alert_id = 8907;
 			$variables = array(
-				'table_name'    => sanitize_text_field( get_the_title( $table_id ) ),
+				'table_name'    => sanitize_text_field( $table_details['name'] ),
 				'table_id'      => $table_id,
 				'count'         => ( isset( $_POST['tablepress']['number']['columns'] ) ) ? intval( $_POST['tablepress']['number']['columns'] ) : 0,
 				'old_count'     => $this->_old_column_count,
@@ -268,27 +329,16 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 			$event_type = ( $this->_old_row_count > intval( $_POST['tablepress']['number']['rows'] ) ) ? 'removed' : 'added';
 			$alert_id = 8906;
 			$variables = array(
-				'table_name'    => sanitize_text_field( get_the_title( $table_id ) ),
+				'table_name'    => sanitize_text_field( $table_details['name'] ),
 				'table_id'      => $table_id,
 				'count'         => ( isset( $_POST['tablepress']['number']['rows'] ) ) ? intval( $_POST['tablepress']['number']['rows'] ) : 0,
 				'old_count'     => $this->_old_row_count,
 				'EventType'     => $event_type,
 				'EditorLink'    => $editor_link,
 			);	
+			$alert_needed = true;
 		
-		// Report other changes we do not (yet) support.
-		} else {
-			$alert_id = 8905;
-			$variables = array(
-				'table_name'  => sanitize_text_field( get_the_title( $table_id ) ),
-				'table_id'    => $table_id,
-				'columns'     => ( isset( $_POST['tablepress']['number']['columns'] ) ) ? intval( $_POST['tablepress']['number']['columns'] ) : 0,
-				'rows'        => ( isset( $_POST['tablepress']['number']['rows'] ) ) ? intval( $_POST['tablepress']['number']['rows'] ) : 0,
-				'old_columns' => $this->_old_column_count,
-				'old_rows'    => $this->_old_row_count,
-				'EditorLink'  => $editor_link,
-			);	
-		}		
+		}
 		
 		if ( $alert_needed ) {
 			// Do alert.
@@ -298,7 +348,7 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 		return;
 	}
 
-		/**
+	/**
 	 * Detect imported tabled.
 	 *
 	 * @since 1.0.0
@@ -309,4 +359,5 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 		$this->imported_table_id = $table_id;
 		return;
 	}
+
 }
