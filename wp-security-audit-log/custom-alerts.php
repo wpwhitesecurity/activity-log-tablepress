@@ -152,12 +152,14 @@ $custom_alerts = [
 
                 [
                     __( 'Table ID', 'wsal-tablepress' ) => '%table_id%',
+                    __( 'Previous value', 'wsal-tablepress' ) => '%old_value%',
+                    __( 'New value', 'wsal-tablepress' ) => '%new_value%',
                 ],
                 [
                     __( 'View in the editor', 'wsal-tablepress' ) => '%EditorLink%',
                 ],
                 'tablepress_tables',
-                'enabled',
+                'modified',
             ],
 
         ],

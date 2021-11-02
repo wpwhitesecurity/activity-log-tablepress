@@ -83,8 +83,8 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 	
 			$new_table_options = ( isset( $_POST['tablepress']['options'] ) ) ? json_decode( str_replace( '\"', '"', $_POST['tablepress']['options'] ), true ) : [];
 	
-			$changed      = array_diff_assoc( $old_table_details, $new_table_options );
-			$bool_options = [ 'table_head', 'table_foot', 'alternating_row_colors', 'row_hover'];
+			$changed      = array_diff_assoc( $new_table_options, $old_table_details );
+			$bool_options = [ 'table_head', 'table_foot', 'alternating_row_colors', 'row_hover', 'use_datatables', 'print_name', 'print_description', 'datatables_sort', 'datatables_filter', 'datatables_paginate', 'datatables_lengthchange', 'datatables_info', 'datatables_scrollx' ];
 			$alert_needed = false;
 	
 			if ( ! class_exists( 'TablePress_Table_Model' ) ) {
@@ -115,30 +115,65 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 			// Detect and report setting changes.
 			if ( ! empty( $changed ) ) {
 				foreach ( $changed as $updated_table_setting => $value ) {
-					if ( in_array( $updated_table_setting , $bool_options ) ) {
-	
-						// Tidy up name to something useful.
-						if ( 'table_foot' == $updated_table_setting ) {
-							$updated_name = esc_html__( 'The last row of the table is the table footer', 'wsal-tablepress' );
-						} else if ( 'table_head' == $updated_table_setting ) {
-							$updated_name = esc_html__( 'The first row of the table is the table header', 'wsal-tablepress' );
-						} else if ( 'alternating_row_colors' == $updated_table_setting ) {
-							$updated_name = esc_html__( 'The background colors of consecutive rows shall alternate', 'wsal-tablepress' );
-						} else if ( 'row_hover' == $updated_table_setting ) {
-							$updated_name = esc_html__( 'Highlight a row while the mouse cursor hovers above it by changing its background color', 'wsal-tablepress' );
-						}
-						$alert_id = 8908;
-						$variables = array(
-							'table_name'   => sanitize_text_field( $table_details['name'] ),
-							'table_id'     => $table_id,
-							'option_name'  => $updated_name,
-							'EventType'    => ( $new_table_options[$updated_table_setting] ) ? 'enabled' : 'disabled',
-							'EditorLink'   => $editor_link,
-						);
-						$this->plugin->alerts->Trigger( $alert_id, $variables );
-					} else {
-						
+					// Tidy up name to something useful.
+					if ( 'table_foot' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'The last row of the table is the table footer', 'wsal-tablepress' );
+					} else if ( 'table_head' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'The first row of the table is the table header', 'wsal-tablepress' );
+					} else if ( 'alternating_row_colors' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'The background colors of consecutive rows shall alternate', 'wsal-tablepress' );
+					} else if ( 'row_hover' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'Highlight a row while the mouse cursor hovers above it by changing its background color', 'wsal-tablepress' );
+					} else if ( 'use_datatables' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'Use the following features of the DataTables JavaScript library with this table', 'wsal-tablepress' );
+					} else if ( 'print_name' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'Show the table name', 'wsal-tablepress' );
+					} else if ( 'print_description' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'Show the table description', 'wsal-tablepress' );
+					} else if ( 'datatables_sort' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'Enable sorting of the table by the visitor.', 'wsal-tablepress' );
+					} else if ( 'datatables_filter' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'Enable the visitor to filter or search the table.' );
+					} else if ( 'datatables_paginate' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'Enable pagination of the table', 'wsal-tablepress' );
+					} else if ( 'datatables_lengthchange' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'Allow the visitor to change the number of rows shown when using pagination.', 'wsal-tablepress' );
+					} else if ( 'datatables_info' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'Enable the table information display', 'wsal-tablepress' );
+					} else if ( 'datatables_scrollx' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'Enable horizontal scrolling', 'wsal-tablepress' );
+					} else if ( 'print_name_position' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'Table name position', 'wsal-tablepress' );
+					} elseif ( 'print_description_position' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'Table description position', 'wsal-tablepress' );
+					} elseif ( 'extra_css_classes' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'Extra CSS Classes', 'wsal-tablepress' );
+					} elseif ( 'datatables_paginate_entries' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'Table pagignation length', 'wsal-tablepress' );
+					} elseif ( 'datatables_custom_commands' == $updated_table_setting ) {
+						$updated_name = esc_html__( 'Custom table commands', 'wsal-tablepress' );
 					}
+					
+					$alert_id = 8908;
+					if ( in_array( $updated_table_setting , $bool_options ) ) {
+						$value = ( empty( $value ) ) ? 'disabled' : 'enabled';
+					}
+					if ( in_array( $updated_table_setting , $bool_options ) ) {
+						$old_value = ( empty( $new_table_options[$updated_table_setting] ) ) ? 'enabled': 'disabled';
+					} else {
+						$old_value = $old_table_details[$updated_table_setting];
+					}
+
+					$variables = array(
+						'table_name'   => sanitize_text_field( $table_details['name'] ),
+						'table_id'     => $table_id,
+						'option_name'  => $updated_name,							
+						'new_value'    => $value,
+						'old_value'    => $old_value,
+						'EventType'    => ( $new_table_options[$updated_table_setting] ) ? 'enabled' : 'disabled',
+						'EditorLink'   => $editor_link,
+					);
+					$this->plugin->alerts->Trigger( $alert_id, $variables );
 				}		
 			} 			
 	
