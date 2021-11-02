@@ -3,9 +3,9 @@ Contributors: WPWhiteSecurity
 Plugin URI: https://wpactivitylog.com
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl.html
-Tags: activity log for WPForms, WP Activity Log extension, activity logs
+Tags: activity log for TablePress, WP Activity Log extension, activity logs
 Requires at least: 4.5
-Tested up to: 5.8
+Tested up to: 5.8.1
 Stable tag: 1.0.0
 Requires PHP: 7.0
 
@@ -17,7 +17,7 @@ TablePress allows you to build tables for your WordPress website. Tables allow y
 
 Keep a record of the changes that happen on your tables, when someone creates, modifies or deletes a table, adds or deletes a row or a column, and much more by installing this extension alongside the WP Activity Log plugin.
 
-Refer to [activity log for TablePress](https://wpactivitylog.com/extensions/tablepress-activity-log/?utm_source=wordpress.org&utm_medium=referral&utm_campaign=WSAL&utm_content=plugin+repos+description) for more detailed information on this integration.
+Refer to [activity log for TablePress](https://wpactivitylog.com/extensions/activity-log-tablepress/?utm_source=wordpress.org&utm_medium=referral&utm_campaign=WSAL&utm_content=plugin+repos+description) for more detailed information on this integration.
 
 #### About WP Activity Log
 [WP Activity Log](https://wpactivitylog.com/?utm_source=wordpress.org&utm_medium=referral&utm_campaign=WSAL&utm_content=plugin+repos+description) is the most comprehensive real time activity log plugin for WordPress. It helps thousands administrators and security professionals keep an eye on what is happening on their websites and multisite networks.
@@ -38,6 +38,7 @@ Below are some of the user and plugin changes you can keep a log of when you ins
 * Creates a new table
 * Modifies, duplicates, renames or deletes a table
 * Adds a new row or column in a table
+* Changed the value of a cell in a table
 * Changes a table's ID
 * Changes to the table's settings
 * And much more!
@@ -55,7 +56,7 @@ Refer to the [activity logs event IDs for WPForms](https://wpactivitylog.com/sup
 
 1. Ensure WP Activity Log is already installed.
 1. Visit 'Plugins > Add New'.
-1. Search for 'WP Activity Log extension for TablePress'.
+1. Search for 'WP Activity Log for TablePress'.
 1. Install and activate the extension.
 
 === Install this extension manually ===
@@ -63,7 +64,7 @@ Refer to the [activity logs event IDs for WPForms](https://wpactivitylog.com/sup
 1. Ensure WP Activity Log is already installed.
 1. Download the plugin and extract the files.
 1. Upload the `activity-log-tablepress` folder to the `/wp-content/plugins/` folder on your website.
-1. Activate the WP Activity Log extension for TablePress plugin from the 'Plugins' menu in WordPress.
+1. Activate the Activity Log for TablePress plugin from the 'Plugins' menu in WordPress.
 
 == Frequently Asked Questions ==
 
@@ -72,10 +73,8 @@ Please refer to our [Support & Documentation pages](https://wpactivitylog.com/su
 
 == Screenshots ==
 
-
-
 == Changelog ==
 
-= 1.0.0 (2021-10-14) =
+= 1.0.0 (2021-11-02) =
 
 	*Initial release.
