@@ -7,7 +7,7 @@ Tags: activity log for WPForms, WP Activity Log extension, activity logs
 Requires at least: 4.5
 Tested up to: 5.8.3
 Stable tag: 1.0.0
-Requires PHP: 7.0
+Requires PHP: 7.2
 
 Keep a log of changes that happen in the tables built with the TablePress plugin.
 
