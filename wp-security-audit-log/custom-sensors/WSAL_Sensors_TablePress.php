@@ -81,7 +81,7 @@ class WSAL_Sensors_TablePress extends WSAL_AbstractSensor {
 				unset( $old_table_details['last_editor']  );
 			}
 	
-			$new_table_options = ( isset( $_POST['tablepress']['options'] ) ) ? json_decode( str_replace( '\"', '"', $_POST['tablepress']['options'] ), true ) : [];
+			$new_table_options = ( isset( $_POST['tablepress']['options'] ) ) ? json_decode( wp_unslash( $_POST['tablepress']['options'] ), true ) : [];
 	
 			$changed      = array_diff_assoc( $new_table_options, $old_table_details );
 			$bool_options = [ 'table_head', 'table_foot', 'alternating_row_colors', 'row_hover', 'use_datatables', 'print_name', 'print_description', 'datatables_sort', 'datatables_filter', 'datatables_paginate', 'datatables_lengthchange', 'datatables_info', 'datatables_scrollx' ];
