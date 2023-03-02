@@ -64,11 +64,11 @@ add_action(
 	* @since latest
 	*/
 	function () {
-		require_once __DIR__ . '/../wp-security-audit-log/custom-sensors/class-tablepress-sensor.php';
+		require_once __DIR__ . '/../wp-security-audit-log/sensors/class-tablepress-sensor.php';
 
 		Classes_Helper::add_to_class_map(
 			array(
-				'WSAL\\Plugin_Sensors\\TablePress_Sensor' => __DIR__ . '/../wp-security-audit-log/custom-sensors/class-tablepress-sensor.php',
+				'WSAL\\Plugin_Sensors\\TablePress_Sensor' => __DIR__ . '/../wp-security-audit-log/sensors/class-tablepress-sensor.php',
 			)
 		);
 	}
