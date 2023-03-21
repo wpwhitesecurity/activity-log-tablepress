@@ -122,6 +122,11 @@ if ( ! class_exists( '\WSAL\Plugin_Sensors\TablePress_Sensor' ) ) {
 
 				$new_table_options = ( isset( $_POST['tablepress']['options'] ) ) ? json_decode( str_replace( '\"', '"', $_POST['tablepress']['options'] ), true ) : array();
 
+				// Remove part we are not interested in.
+				if ( isset( $new_table_options['last_editor'] ) ) {
+					unset( $new_table_options['last_editor'] );
+				}
+
 				$changed      = array_diff_assoc( $new_table_options, $old_table_details );
 				$bool_options = array( 'table_head', 'table_foot', 'alternating_row_colors', 'row_hover', 'use_datatables', 'print_name', 'print_description', 'datatables_sort', 'datatables_filter', 'datatables_paginate', 'datatables_lengthchange', 'datatables_info', 'datatables_scrollx' );
 				$alert_needed = false;
