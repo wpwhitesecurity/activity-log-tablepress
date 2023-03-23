@@ -4,9 +4,9 @@ Plugin URI: https://wpactivitylog.com
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl.html
 Tags: activity log for WPForms, WP Activity Log extension, activity logs
-Requires at least: 4.5
-Tested up to: 5.8.3
-Stable tag: 1.0.0
+Requires at least: 5.0
+Tested up to: 6.1.1
+Stable tag: 1.1.0
 Requires PHP: 7.2
 
 Keep a log of changes that happen in the tables built with the TablePress plugin.
@@ -75,6 +75,11 @@ Please refer to our [Support & Documentation pages](https://wpactivitylog.com/su
 
 
 == Changelog ==
+
+= 1.1.0 (2023-03-23) =
+
+* **Plugin improvements**
+	* Support for WP Activity Log 4.5 (upcoming update).
 
 = 1.0.0 (2021-11-02) =
 
