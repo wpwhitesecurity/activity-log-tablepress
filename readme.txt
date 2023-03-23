@@ -5,9 +5,9 @@ License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl.html
 Tags: activity log for WPForms, WP Activity Log extension, activity logs
 Requires at least: 4.5
-Tested up to: 5.8
+Tested up to: 5.8.3
 Stable tag: 1.0.0
-Requires PHP: 7.0
+Requires PHP: 7.2
 
 Keep a log of changes that happen in the tables built with the TablePress plugin.
 
@@ -42,7 +42,7 @@ Below are some of the user and plugin changes you can keep a log of when you ins
 * Changes to the table's settings
 * And much more!
 
-Refer to the [activity logs event IDs for WPForms](https://wpactivitylog.com/support/kb/list-wordpress-activity-log-event-ids/#tablepress?utm_source=wordpress.org&utm_medium=referral&utm_campaign=WSAL&utm_content=plugin+repos+description)) for a complete list of the changes the plugin can keep a log of.
+Refer to the [activity logs event IDs for WPForms](https://wpactivitylog.com/support/kb/list-wordpress-activity-log-event-ids/#tablepress?utm_source=wordpress.org&utm_medium=referral&utm_campaign=WSAL&utm_content=plugin+repos+description) for a complete list of the changes the plugin can keep a log of.
 
 == Installation ==
 
@@ -76,6 +76,6 @@ Please refer to our [Support & Documentation pages](https://wpactivitylog.com/su
 
 == Changelog ==
 
-= 1.0.0 (2021-10-14) =
+= 1.0.0 (2021-11-02) =
 
 	*Initial release.

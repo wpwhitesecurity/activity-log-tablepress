@@ -6,13 +6,15 @@
  * Text Domain: wsal-tablepress
  * Author: WP White Security
  * Author URI: http://www.wpwhitesecurity.com/
- * Version: 1.0.0
+ * Version: 1.1.0
  * License: GPL2
  * Network: true
  *
  * @package WsalExtensionCore
  * @subpackage Wsal Custom Events Loader
  */
+
+use WSAL\Helpers\Classes_Helper;
 
 /*
  Copyright(c) 2020  WP White Security  (email : info@wpwhitesecurity.com)
@@ -36,3 +38,23 @@ $wsal_extension = new WPWhiteSecurity\ActivityLog\Extensions\Common\Core( __FILE
 
 // Include extension specific functions.
 require_once plugin_dir_path( __FILE__ ) . 'includes/wsal-functions.php';
+
+add_action(
+	'wsal_custom_alerts_register',
+	/**
+	* Adds sensors classes to the Class Helper
+	*
+	* @return void
+	*
+	* @since latest
+	*/
+	function () {
+		require_once __DIR__ . '/wp-security-audit-log/class-tablepress-custom-alerts.php';
+
+		Classes_Helper::add_to_class_map(
+			array(
+				'WSAL\\Custom_Alerts\\Tablepress_Custom_Alerts' => __DIR__ . '/wp-security-audit-log/class-tablepress-custom-alerts.php',
+			)
+		);
+	}
+);
