@@ -6,7 +6,7 @@
  * Text Domain: wsal-tablepress
  * Author: WP White Security
  * Author URI: http://www.wpwhitesecurity.com/
- * Version: 1.1.0
+ * Version: 1.1.1
  * License: GPL2
  * Network: true
  *
