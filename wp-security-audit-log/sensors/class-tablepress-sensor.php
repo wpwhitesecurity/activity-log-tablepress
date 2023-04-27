@@ -120,7 +120,7 @@ if ( ! class_exists( '\WSAL\Plugin_Sensors\TablePress_Sensor' ) ) {
 					unset( $old_table_details['last_editor'] );
 				}
 
-				$new_table_options = ( isset( $_POST['tablepress']['options'] ) ) ? json_decode( str_replace( '\"', '"', $_POST['tablepress']['options'] ), true ) : array();
+				$new_table_options = ( isset( $_POST['tablepress']['options'] ) ) ? json_decode( wp_unslash( $_POST['tablepress']['options'] ), true ) : array();
 
 				// Remove part we are not interested in.
 				if ( isset( $new_table_options['last_editor'] ) ) {
